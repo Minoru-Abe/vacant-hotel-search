@@ -35,12 +35,19 @@ outputfile.write(LINECODE)
 line = paramappidfile.readline()
 appid = line.replace(LINECODE,"")
 
-#Compile target hotels from hotelno parameter file for API variable
+#Initialize parameter dictionary with mandatory items
+params = {
+    "applicationId":appid,
+    "sort":"-roomCharge",
+    "adultNum":2,
+    "lowClassNum":1,
+    "infantWithMBNum":1
+}
+
+#Compile target hotels from hotelno parameter file for API variable to call API
 hotelno = ""
 linecount = 1
-
-print("Target hotels are like the followings.")
-
+print("Target hotels are as following." )
 for line in paramhotelfile:
     print(line.replace(LINECODE,""))
     separatedLine = line.replace(LINECODE,"").split(COMMA)
@@ -49,15 +56,11 @@ for line in paramhotelfile:
     hotelno = hotelno + separatedLine[0]
     linecount+=1
 
-#Initialize parameter dictionary with mandatory items
-params = {
-    "applicationId":appid,
-    "hotelNo":hotelno,
-    "sort":"-roomCharge",
-    "adultNum":2,
-    "lowClassNum":1,
-    "infantWithMBNum":1
-}
+#If some hotels are specified, set them to the parameters.
+if not hotelno:
+    print("No hotel no was specified.")
+else:
+    params["hotelNo"] = hotelno
 
 #Calling API with inputed checkinDate and checkoutDate.
 for line in paramdatefile:
