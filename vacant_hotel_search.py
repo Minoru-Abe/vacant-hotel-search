@@ -108,6 +108,8 @@ for line in paramdatefile:
     if res.status_code == requests.codes.not_found:
         continue
 
+    res.raise_for_status()
+
     result = res.json()
     hotels = result["hotels"]
 
