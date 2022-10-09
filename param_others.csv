@@ -1,0 +1,5 @@
+validFlag(0:false 1:true),paramName,paramValue
+1,largeClassCode,japan
+1,middleClassCode,hokkaido
+1,smallClassCode,sapporo
+1,detailClassCode,A

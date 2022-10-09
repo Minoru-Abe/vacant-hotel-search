@@ -20,11 +20,13 @@ INVALIDFLAG = "0"
 paramdatefile = open("param_date.csv", "r")
 paramhotelfile = open("param_hotel.csv", "r")
 paramappidfile = open("param_appid.csv", "r")
+paramothersfile = open("param_others.csv", "r")
 
 #Skip header line in parameter files
 fileheader = next(paramdatefile)
 fileheader = next(paramhotelfile)
 fileheader = next(paramappidfile)
+fileheader = next(paramothersfile)
 
 #Define output files and output the header line
 outputfile = open("output.csv", "w", encoding="utf_8_sig")
@@ -45,7 +47,8 @@ params = {
     "infantWithMBNum":1
 }
 
-#Compile target hotels from hotelno parameter file for API variable to call API
+#Compile target hotels from hotelno parameter file for API variable to call API]
+#If some hotels are specified, set them to the parameters.
 hotelno = ""
 linecount = 1
 print("Target hotels are as following." )
@@ -61,11 +64,23 @@ for line in paramhotelfile:
     hotelno = hotelno + separatedLine[1]
     linecount+=1
 
-#If some hotels are specified, set them to the parameters.
 if not hotelno:
     print("No hotel no was specified.")
 else:
     params["hotelNo"] = hotelno
+
+
+#Read param_others.csv and use it to call API
+for line in paramothersfile:
+    separatedLine = line.replace(LINECODE,"").split(COMMA)
+    validFlag = separatedLine[0]
+    #If validFlag is invalid (value=0), go to next loop
+    if validFlag == INVALIDFLAG:
+        continue
+    print(line.replace(LINECODE,""))
+    paramName = separatedLine[1]
+    paramValue = separatedLine[2]
+    params[paramName] = paramValue
 
 #Calling API with inputed checkinDate and checkoutDate.
 for line in paramdatefile:
