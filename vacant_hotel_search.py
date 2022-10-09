@@ -14,6 +14,7 @@ CHARGE = "charge"
 REVIEWCOUNT = "reviewCount"
 REVIEWAVERAGE = "reviewAverage"
 HOTELMAPIMAGEURL = "hotelMapImageUrl"
+VALIDFLAG = "0"
 
 #Define input parameter files
 paramdatefile = open("param_date.csv", "r")
@@ -64,13 +65,14 @@ else:
 
 #Calling API with inputed checkinDate and checkoutDate.
 for line in paramdatefile:
-    #sleep time to avoid "too many requests within certain period time frame"
-    time.sleep(1)
-
     #Read checkinDate and checkoutDate from parameter file and set those items to parameter dictionary to call API
     separatedLine = line.replace(LINECODE,"").split(COMMA)
-    checkinDate = separatedLine[0]
-    checkoutDate = separatedLine[1]
+    validFlag = separatedLine[0]
+    checkinDate = separatedLine[1]
+    checkoutDate = separatedLine[2]
+    #If validFlag is invalid (value=0), go to next loop
+    if validFlag == VALIDFLAG:
+        continue
 
     params["checkinDate"] = checkinDate
     params["checkoutDate"] = checkoutDate
@@ -92,6 +94,9 @@ for line in paramdatefile:
     #    "lowClassNum":1,
     #    "infantWithMBNum":1
     #}
+
+    #sleep time to avoid "too many requests within certain period time frame"
+    time.sleep(1)
 
     res = requests.get(REQUEST_URL, params)
 
