@@ -14,7 +14,7 @@ CHARGE = "charge"
 REVIEWCOUNT = "reviewCount"
 REVIEWAVERAGE = "reviewAverage"
 HOTELMAPIMAGEURL = "hotelMapImageUrl"
-VALIDFLAG = "0"
+INVALIDFLAG = "0"
 
 #Define input parameter files
 paramdatefile = open("param_date.csv", "r")
@@ -50,11 +50,15 @@ hotelno = ""
 linecount = 1
 print("Target hotels are as following." )
 for line in paramhotelfile:
-    print(line.replace(LINECODE,""))
     separatedLine = line.replace(LINECODE,"").split(COMMA)
+    validFlag = separatedLine[0]
+    #If validFlag is invalid (value=0), go to next loop
+    if validFlag == INVALIDFLAG:
+        continue
+    print(line.replace(LINECODE,""))
     if linecount > 1:
         hotelno = hotelno + COMMA
-    hotelno = hotelno + separatedLine[0]
+    hotelno = hotelno + separatedLine[1]
     linecount+=1
 
 #If some hotels are specified, set them to the parameters.
@@ -71,7 +75,7 @@ for line in paramdatefile:
     checkinDate = separatedLine[1]
     checkoutDate = separatedLine[2]
     #If validFlag is invalid (value=0), go to next loop
-    if validFlag == VALIDFLAG:
+    if validFlag == INVALIDFLAG:
         continue
 
     params["checkinDate"] = checkinDate
