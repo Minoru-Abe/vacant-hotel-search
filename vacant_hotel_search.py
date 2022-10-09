@@ -1,6 +1,6 @@
 import requests
 import time
-
+import line_util
 
 REQUEST_URL = "https://app.rakuten.co.jp/services/api/Travel/VacantHotelSearch/20170426"
 COMMA = ","
@@ -15,6 +15,7 @@ REVIEWCOUNT = "reviewCount"
 REVIEWAVERAGE = "reviewAverage"
 HOTELMAPIMAGEURL = "hotelMapImageUrl"
 INVALIDFLAG = "0"
+LINE_MESSAGE_SEPARATOR = "*************************************"
 
 #Define input parameter files
 paramdatefile = open("param_date.csv", "r")
@@ -69,6 +70,8 @@ if not hotelno:
 else:
     params["hotelNo"] = hotelno
 
+#Define a message to be sent to line
+message_to_line = ""
 
 #Read param_others.csv and use it to call API
 for line in paramothersfile:
@@ -140,6 +143,15 @@ for line in paramdatefile:
             outputfile.write(resultline)
             outputfile.write(LINECODE)
             print(resultline)
+            message_to_line = message_to_line + resultline
+            message_to_line = message_to_line + LINECODE
+            message_to_line = message_to_line + LINE_MESSAGE_SEPARATOR
+            message_to_line = message_to_line + LINECODE
+
+#Send the result message to line
+message_sender = line_util.SendNotification
+message_sender.send_message(message_to_line)
+
 
 paramdatefile.close()
 paramhotelfile.close()
