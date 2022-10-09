@@ -1,6 +1,7 @@
 import requests
 import time
 import line_util
+import sys
 
 REQUEST_URL = "https://app.rakuten.co.jp/services/api/Travel/VacantHotelSearch/20170426"
 COMMA = ","
@@ -16,6 +17,12 @@ REVIEWAVERAGE = "reviewAverage"
 HOTELMAPIMAGEURL = "hotelMapImageUrl"
 INVALIDFLAG = "0"
 LINE_MESSAGE_SEPARATOR = "*************************************"
+
+#Read argument from command line
+#1st argument is to send notification to line. The values are True or False
+args = sys.argv
+send_line_flag = args[1]
+print(send_line_flag)
 
 #Define input parameter files
 paramdatefile = open("param_date.csv", "r")
@@ -148,9 +155,10 @@ for line in paramdatefile:
             message_to_line = message_to_line + LINE_MESSAGE_SEPARATOR
             message_to_line = message_to_line + LINECODE
 
-#Send the result message to line
-message_sender = line_util.SendNotification
-message_sender.send_message(message_to_line)
+#Send the result message to line if send_line_flag is true
+if send_line_flag == "True":
+    message_sender = line_util.SendNotification
+    message_sender.send_message(message_to_line)
 
 
 paramdatefile.close()
