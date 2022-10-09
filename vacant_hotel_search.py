@@ -49,25 +49,28 @@ for line in paramhotelfile:
     hotelno = hotelno + separatedLine[0]
     linecount+=1
 
+#Initialize parameter dictionary with mandatory items
+params = {
+    "applicationId":appid,
+    "hotelNo":hotelno,
+    "sort":"-roomCharge",
+    "adultNum":2,
+    "lowClassNum":1,
+    "infantWithMBNum":1
+}
+
 #Calling API with inputed checkinDate and checkoutDate.
 for line in paramdatefile:
     #sleep time to avoid "too many requests within certain period time frame"
     time.sleep(1)
-    #Read checkinDate and checkoutDate from parameter file
+
+    #Read checkinDate and checkoutDate from parameter file and set those items to parameter dictionary to call API
     separatedLine = line.replace(LINECODE,"").split(COMMA)
     checkinDate = separatedLine[0]
     checkoutDate = separatedLine[1]
 
-    params = {
-        "applicationId":appid,
-        "checkinDate":checkinDate,
-        "checkoutDate":checkoutDate,
-        "hotelNo":hotelno,
-        "sort":"-roomCharge",
-        "adultNum":2,
-        "lowClassNum":1,
-        "infantWithMBNum":1
-    }
+    params["checkinDate"] = checkinDate
+    params["checkoutDate"] = checkoutDate
 
     #If you want to search hotel not by hotelno but by class code, please use the following parameter sets
     #You can get class code list in the following URL
