@@ -1,0 +1,1 @@
+python ./vacant_hotel_search.py True
