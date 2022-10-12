@@ -78,7 +78,7 @@ else:
     params["hotelNo"] = hotelno
 
 #Define a message to be sent to line
-message_to_line = ""
+message_to_line = []
 
 #Read param_others.csv and use it to call API
 for line in paramothersfile:
@@ -150,18 +150,28 @@ for line in paramdatefile:
             outputfile.write(resultline)
             outputfile.write(LINECODE)
             print(resultline)
-            message_to_line = message_to_line + resultline
-            message_to_line = message_to_line + LINECODE
-            message_to_line = message_to_line + LINE_MESSAGE_SEPARATOR
-            message_to_line = message_to_line + LINECODE
+            message_to_line.append(resultline)
 
 #Send the result message to line if send_line_flag is true
+#Compile 4 results into one packet and send it to line, repeat.
 if send_line_flag == "True":
+    message_counter = 0
     message_sender = line_util.SendNotification
-    message_sender.send_message(message_to_line)
+    messages_to_be_sent = ""
+    for message in message_to_line:
+        messages_to_be_sent = messages_to_be_sent + message + LINECODE + LINE_MESSAGE_SEPARATOR + LINECODE
+        message_counter += 1
+        if message_counter == 4:
+            message_sender.send_message(messages_to_be_sent)
+            message_counter = 0
+            messages_to_be_sent = ""
+    #For the case like there are only three messages, or there are 7 messages (not a multiple of 4)
+    if message_counter > 0:
+        message_sender.send_message(messages_to_be_sent)
 
 
 paramdatefile.close()
 paramhotelfile.close()
 paramappidfile.close()
+paramothersfile.close()
 outputfile.close()
