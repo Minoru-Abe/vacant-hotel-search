@@ -1,7 +1,8 @@
 import requests
 import time
-import line_util
 import sys
+sys.path.append("../line_utility")
+import line_util
 
 REQUEST_URL = "https://app.rakuten.co.jp/services/api/Travel/VacantHotelSearch/20170426"
 COMMA = ","
@@ -17,6 +18,7 @@ REVIEWAVERAGE = "reviewAverage"
 HOTELMAPIMAGEURL = "hotelMapImageUrl"
 INVALIDFLAG = "0"
 LINE_MESSAGE_SEPARATOR = "*************************************"
+LINE_ACCESS_TOKEN_FILE = "line_notify_access_token.csv"
 
 #Read argument from command line
 #1st argument is to send notification to line. The values are True or False
@@ -152,6 +154,11 @@ for line in paramdatefile:
             print(resultline)
             message_to_line.append(resultline)
 
+#Open access token file and read the access token
+accesstokenfile = open(LINE_ACCESS_TOKEN_FILE, "r")
+fileheader = next(accesstokenfile)
+access_token = accesstokenfile.readline().replace(LINECODE,"")
+
 #Send the result message to line if send_line_flag is true
 #Compile 4 results into one packet and send it to line, repeat.
 if send_line_flag == "True":
@@ -162,12 +169,12 @@ if send_line_flag == "True":
         messages_to_be_sent = messages_to_be_sent + message + LINECODE + LINE_MESSAGE_SEPARATOR + LINECODE
         message_counter += 1
         if message_counter == 4:
-            message_sender.send_message(messages_to_be_sent)
+            message_sender.send_message(messages_to_be_sent, access_token)
             message_counter = 0
             messages_to_be_sent = ""
     #For the case like there are only three messages, or there are 7 messages (not a multiple of 4)
     if message_counter > 0:
-        message_sender.send_message(messages_to_be_sent)
+        message_sender.send_message(messages_to_be_sent, access_token)
 
 
 paramdatefile.close()
